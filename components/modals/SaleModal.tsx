@@ -1,19 +1,40 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Text, View, StyleSheet, TouchableOpacity, Modal, TextInput} from 'react-native';
 import { useState } from "react";
+import { ISales } from "../interfaces/ISales";
 
 export type SaleModalProps = {
     visible: boolean;
     onAdd:(games_purchased: string, purchase_value: number,
-        data: string,purchaser: string) => void;
+        data: string,purchaser: string, id: number) => void;
     onCancel: () => void;
+    onDelete: (id: number) => void;
+    sale?: ISales;
 };
 
-export default function SaleModal({visible, onAdd, onCancel} : SaleModalProps){
+export default function SaleModal({visible, onAdd, onCancel, onDelete, sale} : SaleModalProps){
     const [games_purchased, setGames_purchased] = useState('');
     const [purchase_value, setPurchase_value] = useState(0);
     const [data, setData] = useState('');
     const [purchaser, setPurchaser] = useState('');
+    const [id, setId] = useState<number>(0)
+
+    useEffect(() => {
+        if(sale){
+            setGames_purchased(sale.games_purchased);
+            setPurchase_value(sale.purchase_value);
+            setData(sale.date);
+            setPurchaser(sale.purchaser);
+            setId(sale.id)
+        } else{
+            setGames_purchased('');
+            setPurchase_value(0);
+            setData('');
+            setPurchaser('');
+            setId(0)
+        }
+    }, [sale])
+
 
     return (
         <Modal visible={visible} animationType="fade" transparent={true} onRequestClose={() => {}}>
@@ -45,7 +66,7 @@ export default function SaleModal({visible, onAdd, onCancel} : SaleModalProps){
                         onChangeText={text => setPurchaser(text)}
                     />
                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.buttonAdd} onPress={() => onAdd(games_purchased, purchase_value, data, purchaser)}>
+                        <TouchableOpacity style={styles.buttonAdd} onPress={() => onAdd(games_purchased,purchase_value, data, purchaser, id)}>
                             <Text style={styles.buttonText}>
                                 Add
                             </Text>
@@ -53,6 +74,11 @@ export default function SaleModal({visible, onAdd, onCancel} : SaleModalProps){
                         <TouchableOpacity style={styles.buttonCancel} onPress={() => onCancel()}>
                             <Text style={styles.buttonText}>
                                 Cancel
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonAdd} onPress={() => onDelete(id)} disabled={id == 0}>
+                            <Text style={styles.buttonText}>
+                                Delete
                             </Text>
                         </TouchableOpacity>
                     </View>                    

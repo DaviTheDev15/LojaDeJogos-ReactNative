@@ -1,16 +1,47 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Text, View, StyleSheet, TouchableOpacity, Modal, TextInput} from 'react-native';
 import { useState } from "react";
+import { IGames } from "../interfaces/IGames";
 
 export type GameModalProps = {
     visible: boolean;
-    onAdd: (title: string, price: number) => void;
+    onAdd: (title: string, price: number,creator: string, publisher: string, year_of_realease: number, minimum_requirements: string, platform: string , id: number) => void;
     onCancel: () => void;
+    onDelete: (id: number) => void;
+    game?: IGames;
 };
 
-export default function GameModal({visible, onAdd, onCancel} : GameModalProps){
-    const [title, setTitle] = useState('');
-    const [price, setPrice] = useState(0);
+export default function GameModal({visible, onAdd, onCancel, onDelete, game} : GameModalProps){
+    const [title, setTitle] = useState<string>('');
+    const [price, setPrice] = useState<number>(0);
+    const [creator, setCreator] = useState<string>('')
+    const [id, setId] = useState<number>(0);
+    const [publisher, setPublisher] = useState<string>('');
+    const [year_of_realease, setYear_of_realease] = useState<number>(0);
+    const [minimum_requirements, setMinimum_requirements] = useState<string>('');
+    const [platform, setPlataform] = useState<string>('');
+
+    useEffect(() => {
+        if (game){
+            setTitle(game.name);
+            setPrice(game.price);
+            setId(game.id);
+            setCreator(game.creator)
+            setPublisher(game.publisher)
+            setMinimum_requirements(game.minimum_requirements)
+            setPlataform(game.platform)
+            setYear_of_realease(game.year_of_realease)
+        } else{
+            setTitle('');
+            setPrice(0);
+            setId(0); 
+            setCreator('')
+            setPublisher('')
+            setMinimum_requirements('')
+            setPlataform('')
+            setYear_of_realease(0)
+        }
+    },[game])
 
     return (
         <Modal visible={visible} animationType="fade" transparent={true} onRequestClose={() => {}}>
@@ -29,9 +60,38 @@ export default function GameModal({visible, onAdd, onCancel} : GameModalProps){
                         value={price.toString()}
                         onChangeText={text => setPrice(Number(text))}
                     />
-
+                    <TextInput 
+                        style={styles.boxInput}
+                        placeholder="Creator"
+                        value={creator}
+                        onChangeText={text => setCreator(text)}
+                    />
+                    <TextInput 
+                        style={styles.boxInput}
+                        placeholder="Publisher"
+                        value={publisher}
+                        onChangeText={text => setPublisher(text)}
+                    />
+                    <TextInput 
+                        style={styles.boxInput}
+                        placeholder="Minimum Requirements"
+                        value={minimum_requirements}
+                        onChangeText={text => setMinimum_requirements(text)}
+                    />
+                    <TextInput 
+                        style={styles.boxInput}
+                        placeholder="Platform"
+                        value={platform}
+                        onChangeText={text => setPlataform(text)}
+                    />
+                    <TextInput 
+                        style={styles.boxInput}
+                        placeholder="Year of Release"
+                        value={year_of_realease.toString()}
+                        onChangeText={text => setYear_of_realease(Number(text))}
+                    />
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.buttonAdd} onPress={() => onAdd(title, price)}>
+                        <TouchableOpacity style={styles.buttonAdd} onPress={() => onAdd(title, price, creator, publisher, year_of_realease, minimum_requirements, platform, id)}>
                             <Text style={styles.buttonText}>
                                 Add
                             </Text>
@@ -39,6 +99,11 @@ export default function GameModal({visible, onAdd, onCancel} : GameModalProps){
                         <TouchableOpacity style={styles.buttonCancel} onPress={() => onCancel()}>
                             <Text style={styles.buttonText}>
                                 Cancel
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonAdd} onPress={() => onDelete(id)} disabled={id == 0}>
+                            <Text style={styles.buttonText}>
+                                Delete
                             </Text>
                         </TouchableOpacity>
                     </View>

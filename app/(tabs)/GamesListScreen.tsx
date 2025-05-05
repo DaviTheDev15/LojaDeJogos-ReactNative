@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { IGames } from '@/components/interfaces/IGames';
 import GameModal from '@/components/modals/GameModal';
 
+/* Só pra fazer o commit k */
+
 export default function GameListScreen(){
     const [games, setGames] = useState<IGames[]>([]);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
